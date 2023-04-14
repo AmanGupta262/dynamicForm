@@ -1,5 +1,6 @@
 import { useState } from "react";
 
+import { Button } from "components/button";
 import {
 	Formik,
 	FieldArray,
@@ -40,10 +41,9 @@ const validationSchema = Yup.object().shape({
 	batteries: Yup.array().of(
 		Yup.object().shape({
 			manufacturer: Yup.string()
-				.required("Manufacturer name is required")
-				.matches(/^[a-zA-Z0-9]+$/, "Manufacturer name must be alphanumeric"),
-			voltage: Yup.string()
-				.required("Please select an option"),
+				.required("Manufacturer is required")
+				.matches(/^[a-zA-Z0-9]+$/, "Manufacturer must be alphanumeric"),
+			voltage: Yup.string().required("Please select an option"),
 			rechargeable: Yup.boolean(),
 		})
 	),
@@ -62,107 +62,136 @@ const DynamicForm = () => {
 		setShowSuccess(true);
 	};
 	return (
-		<div className={styles.form}>
-			<Formik
-				initialValues={initialValues}
-				validationSchema={validationSchema}
-				onSubmit={handleFormSubmit}
-			>
-				{({ errors, touched, values }) => (
-					<Form>
-						<FieldArray
-							name='batteries'
-							render={({ insert, remove }) => (
-								<div className={styles.batteriesContainer}>
-									{values.batteries.map((battery, index) => (
-										<div key={index} className={styles.battery}>
-											<div className={styles.formField}>
-												<label
-													className={styles.label}
-													htmlFor={`batteries.${index}.manufacturer`}
-												>
-													Manufacturer:
-												</label>
-												<Field
-													id={`batteries.${index}.manufacturer`}
-													name={`batteries.${index}.manufacturer`}
-												/>
-												<div className={styles.error}>
-													<ErrorMessage
-														name={`batteries.${index}.manufacturer`}
-													/>
+		<main className={`${styles.pageContainer} `}>
+			<div className={styles.formContainer}>
+				<header className={styles.header}>Batteries</header>
+				<div className={styles.form}>
+					<Formik
+						initialValues={initialValues}
+						validationSchema={validationSchema}
+						onSubmit={handleFormSubmit}
+					>
+						{({ errors, touched, values }) => (
+							<Form id='batteriesInfoForm'>
+								<FieldArray
+									name='batteries'
+									render={({ insert, remove }) => (
+										<div className={styles.batteriesContainer}>
+											{values.batteries.map((battery, index) => (
+												<div key={index} className={styles.battery}>
+													{/* Manufacturer */}
+													<div className={styles.formField}>
+														<label
+															className={styles.label}
+															htmlFor={`batteries.${index}.manufacturer`}
+														>
+															Manufacturer:
+														</label>
+														<Field
+															id={`batteries.${index}.manufacturer`}
+															name={`batteries.${index}.manufacturer`}
+															className={styles.input}
+														/>
+														<div className={styles.error}>
+															<ErrorMessage
+																name={`batteries.${index}.manufacturer`}
+															/>
+														</div>
+													</div>
+
+													{/* Voltage */}
+													<div className={styles.formField}>
+														<label
+															className={styles.label}
+															htmlFor={`batteries.${index}.voltage`}
+														>
+															Voltage:
+														</label>
+														<Field
+															as='select'
+															options={options}
+															id={`batteries.${index}.voltage`}
+															name={`batteries.${index}.voltage`}
+															className={styles.select}
+														>
+															<option value=''>Select an option</option>
+															{options.map((option) => (
+																<option key={option.value} value={option.value}>
+																	{option.label}
+																</option>
+															))}
+														</Field>
+														<div className={styles.error}>
+															<ErrorMessage
+																name={`batteries.${index}.voltage`}
+															/>
+														</div>
+													</div>
+
+													{/* Rechargeable */}
+													<div className={styles.formField}>
+														<label
+															className={styles.label}
+															htmlFor={`batteries.${index}.rechargeable`}
+														>
+															Rechargeable:
+														</label>
+														<Field
+															type='checkbox'
+															name={`batteries.${index}.rechargeable`}
+															id={`batteries.${index}.rechargeable`}
+															className={styles.checkbox}
+														/>
+														<div className={styles.error}>
+															<ErrorMessage
+																name={`batteries.${index}.rechargeable`}
+															/>
+														</div>
+													</div>
+
+													{/* Remove field */}
+													{index !== 0 && (
+														<Button
+															type='button'
+															variant='danger'
+															className={styles.removeBtn}
+															onClick={() => {
+																remove(index);
+															}}
+														>
+															Remove
+														</Button>
+													)}
 												</div>
-											</div>
-											<div className={styles.formField}>
-												<label
-													className={styles.label}
-													htmlFor={`batteries.${index}.voltage`}
-												>
-													Voltage:
-												</label>
-												<Field
-													as='select'
-													options={options}
-													id={`batteries.${index}.voltage`}
-													name={`batteries.${index}.voltage`}
-												>
-													<option value=''>Select an option</option>
-													{options.map((option) => (
-														<option key={option.value} value={option.value}>
-															{option.label}
-														</option>
-													))}
-												</Field>
-												<div className={styles.error}>
-													<ErrorMessage name={`batteries.${index}.voltage`} />
-												</div>
-											</div>
-											<div className={styles.formField}>
-												<label
-													className={styles.label}
-													htmlFor={`batteries.${index}.rechargeable`}
-												>
-													Rechargeable:
-												</label>
-												<Field
-													type='checkbox'
-													name={`batteries.${index}.rechargeable`}
-													id={`batteries.${index}.rechargeable`}
-												/>
-												<div className={styles.error}>
-													<ErrorMessage
-														name={`batteries.${index}.rechargeable`}
-													/>
-												</div>
-											</div>
-											{index !== 0 && (
-												<button
-													type='button'
-													onClick={() => {
-														remove(index);
-													}}
-												>
-													remove
-												</button>
-											)}
+											))}
+
+											{/* Add field */}
+											<Button
+												variant='default'
+												type='button'
+												className={styles.addBtn}
+												onClick={() => {
+													insert(values.batteries.length + 1, singleBattery);
+												}}
+											>
+												Add
+											</Button>
 										</div>
-									))}
-									<button
-										type='button'
-										onClick={() => {
-											insert(values.batteries.length + 1, singleBattery);
-										}}
-									>
-										add
-									</button>
-								</div>
-							)}
-						/>
-						<button type='submit'>submit</button>
-					</Form>
-				)}
-			</Formik>
-		</div>
+									)}
+								/>
+							</Form>
+						)}
+					</Formik>
+				</div>
+				<Button
+					form='batteriesInfoForm'
+					className={styles.submitBtn}
+					type='submit'
+				>
+					Submit
+				</Button>
+			</div>
+		</main>
 	);
 };
 
