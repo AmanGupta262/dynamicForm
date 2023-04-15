@@ -17,7 +17,7 @@ import styles from "./dynamicForm.module.scss";
 import { formValidation } from "./formValidation";
 
 const DynamicForm = () => {
-	const [isLight, setIsLight] = useState<boolean>(true);
+	const [isLightTheme, setIsLightTheme] = useState<boolean>(true);
 
 	const handleFormSubmit = (
 		values: BatteryInitialValues,
@@ -54,13 +54,12 @@ const DynamicForm = () => {
 
 	return (
 		<main
-			id='pageContainer'
-			className={`${styles.pageContainer} ${isLight ? "" : styles.dark} `}
+			className={`${styles.pageContainer} ${isLightTheme ? "" : styles.dark} `}
 		>
 			<div className={styles.formContainer}>
 				<header className={styles.header}>
 					<span>Batteries</span>{" "}
-					<ThemeChanger isLight={isLight} handleChange={setIsLight} />
+					<ThemeChanger isLight={isLightTheme} handleChange={setIsLightTheme} />
 				</header>
 				<div className={styles.form}>
 					<Formik
@@ -151,7 +150,7 @@ const DynamicForm = () => {
 														<RemoveButton
 															type='button'
 															variant='danger'
-                                                            isDataEmpty={isValuesEmpty(battery)}
+															isDataEmpty={isValuesEmpty(battery)}
 															className={styles.removeBtn}
 															onClick={() => {
 																remove(index);
