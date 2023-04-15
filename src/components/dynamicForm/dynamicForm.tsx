@@ -1,6 +1,7 @@
 import { useState } from "react";
 
-import { Button } from "components/button";
+import { Button, ThemeChanger } from "components";
+import { BATTERIES_INITIAL_VALUES, SINGLE_BATTERY } from "constant";
 import {
 	Formik,
 	FieldArray,
@@ -9,75 +10,53 @@ import {
 	Field,
 	ErrorMessage,
 } from "formik";
-import * as Yup from "yup";
+import { BatteryInitialValues } from "types";
 
 import styles from "./dynamicForm.module.scss";
-
-interface Row {
-	manufacturer: string;
-	voltage: string;
-	rechargeable: boolean;
-}
-
-interface InitialValues {
-	batteries: Row[];
-}
-
-const singleBattery = { manufacturer: "", voltage: "", rechargeable: false };
-
-const initialValues: InitialValues = {
-	batteries: [singleBattery],
-};
-
-const options = [
-	{ value: "1.5V", label: "1.5V" },
-	{ value: "3V", label: "3V" },
-	{ value: "6V", label: "6V" },
-	{ value: "9V", label: "9V" },
-	{ value: "12V", label: "12V" },
-];
-
-const validationSchema = Yup.object().shape({
-	batteries: Yup.array().of(
-		Yup.object().shape({
-			manufacturer: Yup.string()
-				.required("Manufacturer is required")
-				.matches(/^[a-zA-Z0-9]+$/, "Manufacturer must be alphanumeric"),
-			voltage: Yup.string().required("Please select an option"),
-			rechargeable: Yup.boolean(),
-		})
-	),
-});
+import { formValidation } from "./formValidation";
 
 const DynamicForm = () => {
-	const [showSuccess, setShowSuccess] = useState(false);
-
+	const [isLight, setIsLight] = useState<boolean>(false);
 	const handleFormSubmit = (
-		values: InitialValues,
-		helpers: FormikHelpers<InitialValues>
+		values: BatteryInitialValues,
+		helpers: FormikHelpers<BatteryInitialValues>
 	) => {
 		const { resetForm } = helpers;
 		console.log(values);
 		resetForm();
-		setShowSuccess(true);
 	};
+
+	const options = [
+		{ value: "1.5V", label: "1.5V" },
+		{ value: "3V", label: "3V" },
+		{ value: "6V", label: "6V" },
+		{ value: "9V", label: "9V" },
+		{ value: "12V", label: "12V" },
+	];
+
 	return (
-		<main className={`${styles.pageContainer} `}>
+		<main
+			id='pageContainer'
+			className={`${styles.pageContainer} ${isLight ? "" : styles.dark} `}
+		>
 			<div className={styles.formContainer}>
-				<header className={styles.header}>Batteries</header>
+				<header className={styles.header}>
+					<span>Batteries</span>{" "}
+					<ThemeChanger isLight={isLight} handleChange={setIsLight} />
+				</header>
 				<div className={styles.form}>
 					<Formik
-						initialValues={initialValues}
-						validationSchema={validationSchema}
+						initialValues={BATTERIES_INITIAL_VALUES}
+						validationSchema={formValidation}
 						onSubmit={handleFormSubmit}
 					>
-						{({ errors, touched, values }) => (
+						{({ values }) => (
 							<Form id='batteriesInfoForm'>
 								<FieldArray
 									name='batteries'
 									render={({ insert, remove }) => (
 										<div className={styles.batteriesContainer}>
-											{values.batteries.map((battery, index) => (
+											{values.batteries.map((_battery, index) => (
 												<div key={index} className={styles.battery}>
 													{/* Manufacturer */}
 													<div className={styles.formField}>
@@ -90,7 +69,7 @@ const DynamicForm = () => {
 														<Field
 															id={`batteries.${index}.manufacturer`}
 															name={`batteries.${index}.manufacturer`}
-															className={styles.input}
+															className={styles.fieldInput}
 														/>
 														<div className={styles.error}>
 															<ErrorMessage
@@ -112,7 +91,7 @@ const DynamicForm = () => {
 															options={options}
 															id={`batteries.${index}.voltage`}
 															name={`batteries.${index}.voltage`}
-															className={styles.select}
+															className={styles.fieldInput}
 														>
 															<option value=''>Select an option</option>
 															{options.map((option) => (
@@ -171,7 +150,7 @@ const DynamicForm = () => {
 												type='button'
 												className={styles.addBtn}
 												onClick={() => {
-													insert(values.batteries.length + 1, singleBattery);
+													insert(values.batteries.length + 1, SINGLE_BATTERY);
 												}}
 											>
 												Add
@@ -183,13 +162,15 @@ const DynamicForm = () => {
 						)}
 					</Formik>
 				</div>
-				<Button
-					form='batteriesInfoForm'
-					className={styles.submitBtn}
-					type='submit'
-				>
-					Submit
-				</Button>
+				<div className={styles.submitBtnContainer}>
+					<Button
+						form='batteriesInfoForm'
+						className={styles.submitBtn}
+						type='submit'
+					>
+						Submit
+					</Button>
+				</div>
 			</div>
 		</main>
 	);

@@ -30,4 +30,12 @@
 			background: var(--button-default-hover);
 		}
 	}
+
+	&.icon {
+		display: flex;
+		align-items: center;
+		justify-content: center;
+        background-color: transparent;
+        color: var(--button-default-color);
+	}
 }

@@ -3,7 +3,7 @@ import { ButtonHTMLAttributes } from "react";
 import styles from "./button.module.scss";
 
 interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
-	variant?: "primary" | "danger" | "default";
+	variant?: "primary" | "danger" | "default" | "icon";
 }
 
 const Button = ({
@@ -12,7 +12,6 @@ const Button = ({
 	className = "",
 	...rest
 }: ButtonProps) => {
-	console.log("info: className", className);
 	return (
 		<button
 			{...rest}
