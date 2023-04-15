@@ -1,6 +1,6 @@
 import { useState } from "react";
 
-import { Button, ThemeChanger } from "components";
+import { Button, RemoveButton, ThemeChanger } from "components";
 import { BATTERIES_INITIAL_VALUES, SINGLE_BATTERY } from "constant";
 import {
 	Formik,
@@ -29,14 +29,19 @@ const DynamicForm = () => {
 		resetForm();
 	};
 
-	const canAddField = (batteries: Battery[]) => {
-		const lastChild = batteries.at(-1);
-		console.log(lastChild?.voltage);
-		if (!lastChild?.manufacturer.trim() || !lastChild?.voltage) {
+	const isValuesEmpty = (battery: Battery) => {
+		if (!battery?.manufacturer.trim() || !battery?.voltage) return true;
+
+		return false;
+	};
+
+	const canAddField = (battery?: Battery) => {
+		if (!battery) return false;
+		const isEmpty = isValuesEmpty(battery);
+		if (isEmpty) {
 			toast("Please fill pervious row", { type: "info" });
-			return false;
 		}
-		return true;
+		return !isEmpty;
 	};
 
 	const options = [
@@ -69,7 +74,7 @@ const DynamicForm = () => {
 									name='batteries'
 									render={({ insert, remove }) => (
 										<div className={styles.batteriesContainer}>
-											{values.batteries.map((_battery, index) => (
+											{values.batteries.map((battery, index) => (
 												<div key={index} className={styles.battery}>
 													{/* Manufacturer */}
 													<div className={styles.formField}>
@@ -143,16 +148,17 @@ const DynamicForm = () => {
 
 													{/* Remove field */}
 													{index !== 0 && (
-														<Button
+														<RemoveButton
 															type='button'
 															variant='danger'
+                                                            isDataEmpty={isValuesEmpty(battery)}
 															className={styles.removeBtn}
 															onClick={() => {
 																remove(index);
 															}}
 														>
 															Remove
-														</Button>
+														</RemoveButton>
 													)}
 												</div>
 											))}
@@ -163,7 +169,7 @@ const DynamicForm = () => {
 												type='button'
 												className={styles.addBtn}
 												onClick={() => {
-													if (canAddField(values.batteries))
+													if (canAddField(values.batteries.at(-1)))
 														insert(values.batteries.length + 1, SINGLE_BATTERY);
 												}}
 											>

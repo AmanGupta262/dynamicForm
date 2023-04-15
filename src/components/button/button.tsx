@@ -1,10 +1,6 @@
-import { ButtonHTMLAttributes } from "react";
+import { ButtonProps } from "types";
 
 import styles from "./button.module.scss";
-
-interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
-	variant?: "primary" | "danger" | "default" | "icon";
-}
 
 const Button = ({
 	variant = "primary",

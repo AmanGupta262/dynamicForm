@@ -17,6 +17,7 @@
 	--button-default-hover: #091e4224;
 	--button-default-color: #172b4d;
 	--box-shadow: #00000033;
+	--toastify-text-color-light: #44546f;
 }
 
 html {
@@ -35,4 +36,10 @@ body {
 code {
 	font-family: source-code-pro, Menlo, Monaco, Consolas, "Courier New",
 		monospace;
+}
+
+.Toastify__toast-body {
+	font-size: 1.4rem;
+	padding: 0.4rem 0.8rem !important;
+	margin: 0 !important;
 }
