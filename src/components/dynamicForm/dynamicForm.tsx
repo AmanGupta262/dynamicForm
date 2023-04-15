@@ -10,6 +10,7 @@ import {
 	Field,
 	ErrorMessage,
 } from "formik";
+import { useLocalStorage } from "hooks";
 import { BatteryCharging } from "react-feather";
 import { toast } from "react-toastify";
 import { Battery, BatteryInitialValues } from "types";
@@ -20,12 +21,19 @@ import { formValidation } from "./formValidation";
 const DynamicForm = () => {
 	const [isLightTheme, setIsLightTheme] = useState<boolean>(true);
 
+	const [initialValues, setInitialValues] =
+		useLocalStorage<BatteryInitialValues>(
+			"batteries",
+			BATTERIES_INITIAL_VALUES
+		);
+
 	const handleFormSubmit = (
 		values: BatteryInitialValues,
 		helpers: FormikHelpers<BatteryInitialValues>
 	) => {
 		const { resetForm } = helpers;
 		console.log(values);
+		setInitialValues(BATTERIES_INITIAL_VALUES);
 		toast("Form submitted successfully", { type: "success" });
 		resetForm();
 	};
@@ -43,6 +51,27 @@ const DynamicForm = () => {
 			toast("Please fill pervious row", { type: "info" });
 		}
 		return !isEmpty;
+	};
+
+	const handleSaveValues = (values: BatteryInitialValues) => {
+		setInitialValues(values);
+	};
+
+	const handleRemoveField = (index: number) => {
+		setInitialValues((prev) => {
+			const prevCopy = { ...prev };
+			prevCopy.batteries.splice(index, 1);
+			console.log("info prev", prev, prevCopy);
+			return prevCopy;
+		});
+	};
+	const handleAddField = (index: number) => {
+		setInitialValues((prev) => {
+			const prevCopy = { ...prev };
+			prevCopy.batteries.push(SINGLE_BATTERY);
+			console.log("info prev", prev, prevCopy);
+			return prevCopy;
+		});
 	};
 
 	const options = [
@@ -67,15 +96,19 @@ const DynamicForm = () => {
 				</header>
 				<div className={styles.form}>
 					<Formik
-						initialValues={BATTERIES_INITIAL_VALUES}
+						initialValues={initialValues}
 						validationSchema={formValidation}
 						onSubmit={handleFormSubmit}
+						enableReinitialize
 					>
 						{({ values }) => (
-							<Form id='batteriesInfoForm'>
+							<Form
+								onBlur={() => handleSaveValues(values)}
+								id='batteriesInfoForm'
+							>
 								<FieldArray
 									name='batteries'
-									render={({ insert, remove }) => (
+									render={() => (
 										<div className={styles.batteriesContainer}>
 											{values.batteries.map((battery, index) => (
 												<div key={index} className={styles.battery}>
@@ -157,7 +190,7 @@ const DynamicForm = () => {
 															isDataEmpty={isValuesEmpty(battery)}
 															className={styles.removeBtn}
 															onClick={() => {
-																remove(index);
+																handleRemoveField(index);
 															}}
 														>
 															Remove
@@ -173,7 +206,7 @@ const DynamicForm = () => {
 												className={styles.addBtn}
 												onClick={() => {
 													if (canAddField(values.batteries.at(-1)))
-														insert(values.batteries.length + 1, SINGLE_BATTERY);
+														handleAddField(values.batteries.length + 1);
 												}}
 											>
 												Add
