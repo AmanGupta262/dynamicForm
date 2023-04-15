@@ -10,6 +10,7 @@ import {
 	Field,
 	ErrorMessage,
 } from "formik";
+import { BatteryCharging } from "react-feather";
 import { toast } from "react-toastify";
 import { Battery, BatteryInitialValues } from "types";
 
@@ -58,7 +59,10 @@ const DynamicForm = () => {
 		>
 			<div className={styles.formContainer}>
 				<header className={styles.header}>
-					<span>Batteries</span>{" "}
+					<div className={styles.title}>
+						<BatteryCharging size={30} color='var(--green)' />
+						Batteries
+					</div>
 					<ThemeChanger isLight={isLightTheme} handleChange={setIsLightTheme} />
 				</header>
 				<div className={styles.form}>
