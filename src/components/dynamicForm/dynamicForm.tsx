@@ -10,20 +10,33 @@ import {
 	Field,
 	ErrorMessage,
 } from "formik";
-import { BatteryInitialValues } from "types";
+import { toast } from "react-toastify";
+import { Battery, BatteryInitialValues } from "types";
 
 import styles from "./dynamicForm.module.scss";
 import { formValidation } from "./formValidation";
 
 const DynamicForm = () => {
-	const [isLight, setIsLight] = useState<boolean>(false);
+	const [isLight, setIsLight] = useState<boolean>(true);
+
 	const handleFormSubmit = (
 		values: BatteryInitialValues,
 		helpers: FormikHelpers<BatteryInitialValues>
 	) => {
 		const { resetForm } = helpers;
 		console.log(values);
+		toast("Form submitted successfully", { type: "success" });
 		resetForm();
+	};
+
+	const canAddField = (batteries: Battery[]) => {
+		const lastChild = batteries.at(-1);
+		console.log(lastChild?.voltage);
+		if (!lastChild?.manufacturer.trim() || !lastChild?.voltage) {
+			toast("Please fill pervious row", { type: "info" });
+			return false;
+		}
+		return true;
 	};
 
 	const options = [
@@ -150,7 +163,8 @@ const DynamicForm = () => {
 												type='button'
 												className={styles.addBtn}
 												onClick={() => {
-													insert(values.batteries.length + 1, SINGLE_BATTERY);
+													if (canAddField(values.batteries))
+														insert(values.batteries.length + 1, SINGLE_BATTERY);
 												}}
 											>
 												Add

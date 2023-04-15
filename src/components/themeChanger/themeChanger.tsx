@@ -1,10 +1,6 @@
 import { Button } from "components/button";
 import { Moon, Sun } from "react-feather";
-
-interface ThemeChangerProps {
-	isLight?: boolean;
-	handleChange(isLight: boolean): void;
-}
+import { ThemeChangerProps } from "types";
 
 const ThemeChanger = ({ isLight = true, handleChange }: ThemeChangerProps) => {
 	return (
