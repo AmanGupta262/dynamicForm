@@ -1,46 +1,35 @@
-# Getting Started with Create React App
+## Dynamic form
+[https://radiant-puffpuff-efb4bf.netlify.app](https://radiant-puffpuff-efb4bf.netlify.app/)
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+### How to setup
 
-## Available Scripts
+- Install Node.js
+- Install Yarn (npm install -g yarn)
+- Run yarn install or yarn
+- Run yarn start to run the app locally
 
-In the project directory, you can run:
+### Packages used
+- React, TypeScript
+- formik: for form
+- yup: for form validation
+- sass: for scss
+- react-feather: for icons
+- react-toastify: for toasts
 
-### `yarn start`
+### Required Features
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in the browser.
+- Each row contains `Manufacturer`, `Voltage` and `Rechargeable` field
+  - Manufacturer is `Text input`
+  - Voltage is `Select dropdown`
+  - Rechargeable is `Checkbox`
+- Clicking the `Add` button allows the user to add another row after filling out the first row
+- Users can delete added rows by clicking the `Remove` button next to each row
+  - If a row is empty, it will be deleted directly upon clicking `Remove`
+  - If a row is not empty, the user will get two options: `Confirm` and `Cancel`. Confirm will delete the row, while Cancel will cancel the deletion
+- Validation added for Manufacturer(Text field) and Voltage(Select dropdown)
+- Clicking the `Submit` button allows the user to submit the form. If all fields are valid, a success toast will be displayed and the form will be reset
 
-The page will reload if you make edits.\
-You will also see any lint errors in the console.
-
-### `yarn test`
-
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
-
-### `yarn build`
-
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
-
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
-
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
-
-### `yarn eject`
-
-**Note: this is a one-way operation. Once you `eject`, you can’t go back!**
-
-If you aren’t satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
-
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you’re on your own.
-
-You don’t have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn’t feel obligated to use this feature. However we understand that this tool wouldn’t be useful if you couldn’t customize it when you are ready for it.
-
-## Learn More
-
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
-
-To learn React, check out the [React documentation](https://reactjs.org/).
+### Additional Features
+- Added light/dark mode. Users can toggle modes by clicking on the `Sun` or `Moon` icon in the header
+- Any unsaved changes will be saved to LocalStorage
+- Added a `Remove All` button at the bottom, which is only visible when there are more than one row.

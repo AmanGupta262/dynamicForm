@@ -1,11 +1,7 @@
 import { useState } from "react";
 
 import { Button } from "components";
-import { ButtonProps } from "types";
-
-interface RemoveButtonProps extends ButtonProps {
-	isDataEmpty?: boolean;
-}
+import { RemoveButtonProps } from "types";
 
 const RemoveButton = ({
 	onClick,

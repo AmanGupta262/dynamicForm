@@ -1,11 +1,7 @@
-import { ErrorMessage, Field, FieldAttributes } from "formik";
+import { ErrorMessage, Field } from "formik";
+import { FormFieldProps } from "types";
 
 import styles from "./formField.module.scss";
-
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-interface FormFieldProps extends FieldAttributes<any> {
-	label: string;
-}
 
 const FormField = ({ label, name, className, ...rest }: FormFieldProps) => {
 	return (
