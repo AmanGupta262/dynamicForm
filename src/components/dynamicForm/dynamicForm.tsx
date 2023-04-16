@@ -1,15 +1,6 @@
-import { useState } from "react";
-
-import { Button, RemoveButton, ThemeChanger } from "components";
+import { Button, FormField, RemoveButton, ThemeChanger } from "components";
 import { BATTERIES_INITIAL_VALUES, SINGLE_BATTERY } from "constant";
-import {
-	Formik,
-	FieldArray,
-	FormikHelpers,
-	Form,
-	Field,
-	ErrorMessage,
-} from "formik";
+import { Formik, FieldArray, FormikHelpers, Form } from "formik";
 import { useLocalStorage } from "hooks";
 import { BatteryCharging } from "react-feather";
 import { toast } from "react-toastify";
@@ -19,7 +10,10 @@ import styles from "./dynamicForm.module.scss";
 import { formValidation } from "./formValidation";
 
 const DynamicForm = () => {
-	const [isLightTheme, setIsLightTheme] = useState<boolean>(true);
+	const [isLightTheme, setIsLightTheme] = useLocalStorage<boolean>(
+		"theme",
+		true
+	);
 
 	const [initialValues, setInitialValues] =
 		useLocalStorage<BatteryInitialValues>(
@@ -65,6 +59,7 @@ const DynamicForm = () => {
 			return prevCopy;
 		});
 	};
+
 	const handleAddField = (index: number) => {
 		setInitialValues((prev) => {
 			const prevCopy = { ...prev };
@@ -72,6 +67,10 @@ const DynamicForm = () => {
 			console.log("info prev", prev, prevCopy);
 			return prevCopy;
 		});
+	};
+
+	const handleRemoveAll = () => {
+		setInitialValues(BATTERIES_INITIAL_VALUES);
 	};
 
 	const options = [
@@ -113,74 +112,32 @@ const DynamicForm = () => {
 											{values.batteries.map((battery, index) => (
 												<div key={index} className={styles.battery}>
 													{/* Manufacturer */}
-													<div className={styles.formField}>
-														<label
-															className={styles.label}
-															htmlFor={`batteries.${index}.manufacturer`}
-														>
-															Manufacturer:
-														</label>
-														<Field
-															id={`batteries.${index}.manufacturer`}
-															name={`batteries.${index}.manufacturer`}
-															className={styles.fieldInput}
-														/>
-														<div className={styles.error}>
-															<ErrorMessage
-																name={`batteries.${index}.manufacturer`}
-															/>
-														</div>
-													</div>
+													<FormField
+														label='Manufacturer:'
+														name={`batteries.${index}.manufacturer`}
+													/>
 
 													{/* Voltage */}
-													<div className={styles.formField}>
-														<label
-															className={styles.label}
-															htmlFor={`batteries.${index}.voltage`}
-														>
-															Voltage:
-														</label>
-														<Field
-															as='select'
-															options={options}
-															id={`batteries.${index}.voltage`}
-															name={`batteries.${index}.voltage`}
-															className={styles.fieldInput}
-														>
-															<option value=''>Select an option</option>
-															{options.map((option) => (
-																<option key={option.value} value={option.value}>
-																	{option.label}
-																</option>
-															))}
-														</Field>
-														<div className={styles.error}>
-															<ErrorMessage
-																name={`batteries.${index}.voltage`}
-															/>
-														</div>
-													</div>
+													<FormField
+														label='Voltage:'
+														name={`batteries.${index}.voltage`}
+														as='select'
+													>
+														<option value=''>Select an option</option>
+														{options.map((option) => (
+															<option key={option.value} value={option.value}>
+																{option.label}
+															</option>
+														))}
+													</FormField>
 
 													{/* Rechargeable */}
-													<div className={styles.formField}>
-														<label
-															className={styles.label}
-															htmlFor={`batteries.${index}.rechargeable`}
-														>
-															Rechargeable:
-														</label>
-														<Field
-															type='checkbox'
-															name={`batteries.${index}.rechargeable`}
-															id={`batteries.${index}.rechargeable`}
-															className={styles.checkbox}
-														/>
-														<div className={styles.error}>
-															<ErrorMessage
-																name={`batteries.${index}.rechargeable`}
-															/>
-														</div>
-													</div>
+													<FormField
+														label='Rechargeable:'
+														name={`batteries.${index}.rechargeable`}
+														className={styles.checkbox}
+														type='checkbox'
+													/>
 
 													{/* Remove field */}
 													{index !== 0 && (
@@ -219,11 +176,18 @@ const DynamicForm = () => {
 					</Formik>
 				</div>
 				<div className={styles.submitBtnContainer}>
-					<Button
-						form='batteriesInfoForm'
-						className={styles.submitBtn}
-						type='submit'
-					>
+					<span>
+						{initialValues.batteries.length > 1 && (
+							<RemoveButton
+								isDataEmpty={false}
+								onClick={handleRemoveAll}
+								variant='danger'
+							>
+								Remove All
+							</RemoveButton>
+						)}
+					</span>
+					<Button form='batteriesInfoForm' type='submit'>
 						Submit
 					</Button>
 				</div>
