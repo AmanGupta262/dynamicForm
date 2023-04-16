@@ -11,6 +11,7 @@ const RemoveButton = ({
 	onClick,
 	children,
 	isDataEmpty = false,
+	className,
 	...rest
 }: RemoveButtonProps) => {
 	const [showConfirm, setShowConfirm] = useState<boolean>(false);
@@ -32,9 +33,20 @@ const RemoveButton = ({
 		);
 
 	return (
-		<Button onClick={handleConfirm} {...rest}>
-			{showConfirm ? "Confirm" : children}
-		</Button>
+		<div className={className}>
+			<Button onClick={handleConfirm} {...rest}>
+				{showConfirm ? "Confirm" : children}
+			</Button>
+			{showConfirm && (
+				<Button
+					style={{ marginLeft: "8px" }}
+					onClick={() => setShowConfirm(false)}
+					variant='default'
+				>
+					Cancel
+				</Button>
+			)}
+		</div>
 	);
 };
 
